@@ -9,6 +9,8 @@ import Link from 'next/link';
 export default function Login() {
     const router = useRouter();
 
+    const [name, setName] = useState('');
+    const [sid, setSID] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [emailSentCount, setEmailSentCount] = useState(0);
@@ -63,6 +65,16 @@ export default function Login() {
     return !emailSentCount ? (
         <div>
             <h1>Sign Up</h1>
+            <input
+                type="text"
+                placeholder="Your Name"
+                onChange={(e) => setName(e.target.value)}
+            />
+            <input
+                type="number"
+                placeholder="1234567890"
+                onChange={(e) => setSID(e.target.value.toString())}
+            />
             <input
                 type="text"
                 placeholder="email@example.com"
