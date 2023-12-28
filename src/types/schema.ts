@@ -1,11 +1,11 @@
 
-enum AssignmentType {
-    'HOMEWORK', 
-    'LAB', 
-    'PROJECT',
+export enum AssignmentType {
+    HOMEWORK, 
+    LAB, 
+    PROJECT,
 }
 
-type Assignment = {
+export type Assignment = {
     id: string,
     type: AssignmentType,
     due_date: Date,
@@ -14,14 +14,15 @@ type Assignment = {
     title: string,
 }
 
-type Student = {
+export type Student = {
     id: string,
-    assigned_ta_db_id: string,
+    assigned_ta_db_id: string | null,
     student_id: string,
+    name: string,
     email: string,
 }
 
-type Submission = {
+export type Submission = {
     id: string,
     student_db_id: string, // database student id
     assignment_db_id: string, // database assignment id
@@ -30,10 +31,8 @@ type Submission = {
     grade: number,
 }
 
-type TeachingAssistant = {
+export type TeachingAssistant = {
     id: string,
     name: string,
     email: string,
 }
-
-export type { Assignment, Student, Submission, TeachingAssistant };

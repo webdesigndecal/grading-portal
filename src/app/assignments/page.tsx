@@ -11,8 +11,6 @@ export default function Assignments() {
         getAllAssignments().then((assignments) => setAssignments(assignments));
     }, []);
 
-    console.log(assignments);
-
     return (
         <div>
             <h1>Assignments</h1>

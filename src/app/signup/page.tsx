@@ -3,6 +3,8 @@
 import supabase from '@/api/createClient';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Student } from '@/types/schema';
+import Link from 'next/link';
 
 export default function Login() {
     const router = useRouter();
@@ -12,21 +14,50 @@ export default function Login() {
     const [emailSentCount, setEmailSentCount] = useState(0);
 
     const handleSignUp = async () => {
-        const { data, error } = await supabase.auth.signUp({
+        const { data: auth_data, error: auth_error } =
+            await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    emailRedirectTo: 'http://localhost:3000/',
+                },
+            });
+        if (auth_error) {
+            throw new Error(`Error signing up: ${auth_error.message}`);
+        }
+
+        const new_student = {
+            id: auth_data.user!.id,
+            email: email,
+            name: '',
+            student_id: '',
+            assigned_ta_db_id: null,
+        } as Student;
+
+        const { data: db_data, error: db_error } = await supabase
+            .from('students')
+            .insert([new_student])
+            .single();
+        if (db_error) {
+            throw new Error(`Error signing up: ${db_error.message}`);
+        }
+
+        setEmailSentCount(1);
+    };
+
+    const handleResend = async () => {
+        const { error } = await supabase.auth.resend({
+            type: 'signup',
             email,
-            password,
             options: {
                 emailRedirectTo: 'http://localhost:3000/',
             },
         });
-
-        console.log(data);
-
         if (error) {
-            throw new Error(`Error signing up: ${error.message}`);
+            throw new Error(`Error resending email: ${error.message}`);
         }
 
-        setEmailSentCount(1);
+        setEmailSentCount(emailSentCount + 1);
     };
 
     return !emailSentCount ? (
@@ -51,6 +82,9 @@ export default function Login() {
                 We sent a magic link to <strong>{email}</strong>. Click the link
                 to sign in.
             </p>
+            <button onClick={() => handleResend()}>
+                <p>Resend the email</p>
+            </button>
         </div>
     );
 }
