@@ -2,6 +2,7 @@
 
 import { getAllAssignments } from '@/api/assignments';
 import { Assignment } from '@/types/schema';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 export default function Assignments() {
@@ -24,6 +25,7 @@ export default function Assignments() {
                             timeStyle: 'short',
                         })}
                     </p>
+                    {/* <Link href={assignment.starter_file_url}>Starter File</Link> */}
                 </div>
             ))}
         </div>

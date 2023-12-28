@@ -1,8 +1,9 @@
 import { Assignment, AssignmentType } from '@/types/schema';
 import supabase from '@/api/createClient';
+import { timestamptzToDate } from '@/utils/helper';
 
 function parseAssignment(assignment: any): Assignment {
-    const due_date = new Date(assignment.due_date);
+    const due_date = timestamptzToDate(assignment.due_date);
     return {
         id: assignment.id,
         type: assignment.type,
@@ -45,12 +46,18 @@ export async function getAssignmentById(id: string): Promise<Assignment> {
 }
 
 /* Returns the created assignment. */
-export async function createAssignment(assignment: Assignment): Promise<Assignment> {
+export async function createAssignment(assignment: Assignment, starter_file: File): Promise<void> {
+    const { data: storage_data, error: storage_error } = await supabase.storage.from('assignment-starters')
+        .upload(`${toShorthand(assignment)}/${starter_file.name}`, starter_file);
+    if (storage_error) {
+        throw new Error(`Error uploading starter file: ${storage_error.message}`);
+    }
+    assignment.starter_file_url = storage_data.path;
+    console.log(assignment);
     const { data, error } = await supabase.from('assignments').insert([assignment]).single();
     if (error) {
         throw new Error(`Error creating assignment: ${error.message}`);
     }
-    return parseAssignment(data);
 }
 
 export async function removeAssignment(id: string): Promise<void> {
