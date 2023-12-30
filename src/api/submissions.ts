@@ -1,9 +1,10 @@
-import { Assignment, Submission } from "@/types/schema";
+import { Assignment, Student, Submission } from "@/types/schema";
 import supabase from "@/api/createClient";
 import { toShorthand } from "./assignments";
+import { timestamptzToDate } from "@/utils/helper";
 
 function parseSubmission(submission: any): Submission {
-    const submitted_at = new Date(submission.submitted_at);
+    const submitted_at = timestamptzToDate(submission.submitted_at);
     return {
         id: submission.id,
         student_db_id: submission.student_db_id,
@@ -14,15 +15,15 @@ function parseSubmission(submission: any): Submission {
     } as Submission;
 }
 
-async function submitAssignment(assignment: Assignment, file: File, studentId: string): Promise<Submission> {
+async function submitAssignment(assignment: Assignment, file: File, student: Student): Promise<Submission> {
     const { data: storage_data, error: storage_error } = await supabase.storage.from('submissions')
-        .upload(`${studentId}/${toShorthand(assignment)}/${file.name}`, file);
+        .upload(`${student.student_id}/${toShorthand(assignment)}/${file.name}`, file);
     if (storage_error) {
         throw new Error(`Error submitting assignment: ${storage_error.message}`);
     }
 
     const submission = {
-        student_db_id: studentId,
+        student_db_id: student.id,
         assignment_db_id: assignment.id,
         submitted_at: new Date(),
         file_url: storage_data.path,

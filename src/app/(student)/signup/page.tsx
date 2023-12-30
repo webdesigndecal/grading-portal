@@ -4,7 +4,6 @@ import supabase from '@/api/createClient';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Student } from '@/types/schema';
-import Link from 'next/link';
 
 export default function Login() {
     const router = useRouter();
