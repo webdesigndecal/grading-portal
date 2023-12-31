@@ -15,7 +15,7 @@ function parseSubmission(submission: any): Submission {
     } as Submission;
 }
 
-async function submitAssignment(assignment: Assignment, file: File, student: Student): Promise<Submission> {
+export async function submitAssignment(assignment: Assignment, file: File, student: Student): Promise<Submission> {
     const { data: storage_data, error: storage_error } = await supabase.storage.from('submissions')
         .upload(`${student.student_id}/${toShorthand(assignment)}/${file.name}`, file);
     if (storage_error) {
@@ -38,7 +38,7 @@ async function submitAssignment(assignment: Assignment, file: File, student: Stu
     return submission;
 }
 
-async function getAllStudentSubmissions(student_id: string): Promise<Submission[]> {
+export async function getAllStudentSubmissions(student_id: string): Promise<Submission[]> {
     const { data, error } = await supabase.from('submissions').select().eq('student_db_id', student_id);
     if (error) {
         throw new Error(`Error getting submissions: ${error.message}`);
@@ -47,4 +47,10 @@ async function getAllStudentSubmissions(student_id: string): Promise<Submission[
     return data.map(parseSubmission);
 }
 
-export { submitAssignment, getAllStudentSubmissions };
+export async function getSubmissionFileFromPath(file_path: string): Promise<string> {
+    const { data: public_url_data } = supabase.storage.from('submissions').getPublicUrl(file_path);
+    const full_url = public_url_data.publicUrl;
+    const response = await fetch(full_url);
+    console.log(response.statusText, full_url);
+    return await response.text();
+}

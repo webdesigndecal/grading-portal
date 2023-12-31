@@ -1,7 +1,16 @@
-import ScheduleWeek from '@/components/ScheduleWeek';
+'use client';
+
+import ScheduleWeek from '@/components/ScheduleWeek/ScheduleWeek';
 import { Assignment, AssignmentType } from '@/types/schema';
+import { getAllAssignments } from '@/api/assignments';
+import { useEffect, useState } from 'react';
 
 export default function Schedule() {
+    const [assignments, setAssignments] = useState<Assignment[]>([]);
+    useEffect(() => {
+        getAllAssignments().then((assignments) => setAssignments(assignments));
+    });
+
     return (
         <div>
             <h1>Schedule</h1>
@@ -13,16 +22,7 @@ export default function Schedule() {
                 programming_slides="asdf"
                 design_recording="asdf"
                 design_slides="asdf"
-                assignments={[
-                    {
-                        id: '582ff807-1b79-4a3d-b43a-86369abb39b1',
-                        type: AssignmentType.HOMEWORK,
-                        due_date: new Date('2023-12-28T07:59:00.000Z'),
-                        number: 1,
-                        title: 'First homework',
-                        starter_file_url: '',
-                    } as Assignment,
-                ]}
+                assignments={assignments}
             />
         </div>
     );
