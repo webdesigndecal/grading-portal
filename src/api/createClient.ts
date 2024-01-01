@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { S3Client } from '@aws-sdk/client-s3';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -12,9 +13,9 @@ if (
   );
 }
 
-const supabase = createClient(
+export const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
 );
 
-export default supabase;
+export const s3 = new S3Client({});

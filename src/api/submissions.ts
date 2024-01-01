@@ -1,5 +1,5 @@
 import { Assignment, Student, Submission } from "@/types/schema";
-import supabase from "@/api/createClient";
+import { supabase } from "@/api/createClient";
 import { toShorthand } from "./assignments";
 import { timestamptzToDate } from "@/utils/helper";
 

@@ -51,6 +51,7 @@ export default async function ContentPage({
     return (
         <>
             <div dangerouslySetInnerHTML={{ __html: body!.toString() }}></div>
+            <iframe srcDoc={contentText}></iframe>
         </>
     );
 }
