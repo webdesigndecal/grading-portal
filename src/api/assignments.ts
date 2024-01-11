@@ -1,5 +1,5 @@
 import { Assignment, AssignmentType } from '@/types/schema';
-import supabase from '@/api/createClient';
+import { supabase } from '@/api/createClient';
 import { timestamptzToDate } from '@/utils/helper';
 
 function parseAssignment(assignment: any): Assignment {

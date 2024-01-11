@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.485.0",
+    "@google-cloud/storage": "^7.7.0",
     "@supabase/supabase-js": "^2.39.1",
     "@types/node": "20.10.5",
     "@types/react": "18.2.45",
