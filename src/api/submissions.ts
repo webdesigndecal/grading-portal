@@ -1,7 +1,8 @@
 import { Assignment, Student, Submission } from "@/types/schema";
-import { supabase } from "@/api/createClient";
+import { supabase, s3 } from "@/api/createClient";
 import { toShorthand } from "./assignments";
 import { timestamptzToDate } from "@/utils/helper";
+import { PutObjectCommand, S3ServiceException } from "@aws-sdk/client-s3";
 
 function parseSubmission(submission: any): Submission {
     const submitted_at = timestamptzToDate(submission.submitted_at);
@@ -15,18 +16,29 @@ function parseSubmission(submission: any): Submission {
     } as Submission;
 }
 
-export async function submitAssignment(assignment: Assignment, file: File, student: Student): Promise<Submission> {
-    const { data: storage_data, error: storage_error } = await supabase.storage.from('submissions')
-        .upload(`${student.student_id}/${toShorthand(assignment)}/${file.name}`, file);
-    if (storage_error) {
-        throw new Error(`Error submitting assignment: ${storage_error.message}`);
+async function storeSubmissionToS3(file_url: string, file: File) {
+    const command = new PutObjectCommand({
+        Bucket: 'wdd-submissions',
+        Key: file_url,
+        Body: file,
+        ContentType: file.type,
+    });
+    try {
+        return await s3.send(command);
+    } catch (e: any) {
+        throw new Error(`Error uploading file: ${e.message}`);
     }
+}
+
+export async function submitAssignment(assignment: Assignment, file: File, student: Student): Promise<Submission> {
+    const file_url = `${student.student_id}/${toShorthand(assignment)}/${file.name}`;
+    const response = await storeSubmissionToS3(file_url, file);
 
     const submission = {
         student_db_id: student.id,
         assignment_db_id: assignment.id,
         submitted_at: new Date(),
-        file_url: storage_data.path,
+        file_url,
         grade: -1,
     } as Submission;
 

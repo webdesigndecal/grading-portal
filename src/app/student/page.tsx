@@ -1,22 +1,20 @@
-'use client';
-
-import Link from 'next/link';
+import StyledButton from '@/components/StyledButton/StyledButton';
+import styles from './page.module.css';
 
 export default function StudentIndex() {
     return (
-        <div>
-            <h1>Student Index</h1>
-            <Link href="/student/submit">Submit Assignment</Link>
-            <Link href="/student/assignments">Assignments</Link>
-            {/* Example of usage for aws s3 service
-            
-            <Link
-                href="https://wdd-submissions.s3.us-west-1.amazonaws.com/hw2/index.html"
-                rel="noopener noreferrer"
-                target="_blank"
-            >
-                Homework2
-            </Link> */}
+        <div className={styles.container}>
+            <h1>Welcome to WDD.</h1>
+            <StyledButton
+                is_button={false}
+                href="/student/submit"
+                text="Submit Assignment"
+            />
+            <StyledButton
+                is_button={false}
+                href="/student/assignments"
+                text="Assignments"
+            />
         </div>
     );
 }
